@@ -2,6 +2,7 @@ package praktikum;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import io.qameta.allure.junit4.DisplayName;
@@ -29,7 +30,6 @@ public class OrderTest {
                 new String[] {OrderTestStep.getIngredients()[0],
                         OrderTestStep.getIngredients()[1],
                         OrderTestStep.getIngredients()[2]});
-        UserTestStep.deleteUser("testemail@testdomain.local", "12345678");
     }
 
     @Test
@@ -43,12 +43,12 @@ public class OrderTest {
         UserTestStep.checkBooleanResponse(login, "success", true);
         UserTestStep.checkStatusCode(login, 200);
         OrderTestStep.makeOrderWithoutIngredients(UserTestStep.getAccessToken(login), new String[] {});
-        UserTestStep.deleteUser("testemail@testdomain.local", "12345678");
     }
 
     @Test
     @DisplayName("Make order without authorization")
     public void testMakeOrderWithoutAuth() {
+        UserTestStep.registerUser("testemail@testdomain.local", "12345678", "Chubaka");
         OrderTestStep.makeOrderWithoutAuthorization(new String[] {OrderTestStep.getIngredients()[0],
                         OrderTestStep.getIngredients()[1],
                         OrderTestStep.getIngredients()[2]});
@@ -65,12 +65,12 @@ public class OrderTest {
         UserTestStep.checkBooleanResponse(login, "success", true);
         UserTestStep.checkStatusCode(login, 200);
         OrderTestStep.makeOrderWithInvalidIngredients(UserTestStep.getAccessToken(login), new String[] {"9ac0c5a71d17", "8bc0c5a71d1f8", "1bc0c5a71d1f820"});
-        UserTestStep.deleteUser("testemail@testdomain.local", "12345678");
     }
 
     @Test
     @DisplayName("Make order without authorization and invalid ingredients")
     public void testMakeOrderWithoutAuthAndInvalidIngredients() {
+        UserTestStep.registerUser("testemail@testdomain.local", "12345678", "Chubaka");
         OrderTestStep.makeOrderWithoutAuthAndInvalidIngredients(new String[] {"9ac0c5a71d1782001", "8bc0c5a71d1f82001", "d1f82001bdafa6d"});
     }
 
@@ -97,13 +97,18 @@ public class OrderTest {
                         OrderTestStep.getIngredients()[1],
                         OrderTestStep.getIngredients()[2]});
         OrderTestStep.getOrdersofAuthorizedUser(UserTestStep.getAccessToken(login));
-        UserTestStep.deleteUser("testemail@testdomain.local", "12345678");
     }
 
     @Test
     @DisplayName("Get orders without authorization")
     public void testGetOrdersWithoutAuth() {
+        UserTestStep.registerUser("testemail@testdomain.local", "12345678", "Chubaka");
         OrderTestStep.getOrderWithoutAuthorization();
+    }
+
+    @After
+    public void deleteUser() {
+        UserTestStep.deleteUser("testemail@testdomain.local", "12345678");
     }
 
 }
